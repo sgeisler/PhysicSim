@@ -39,14 +39,15 @@ public:
 	Vector operator*(const Tensor&);
 	Vector cross(const Vector&);
 
-	Vector getParallelComponent(const Vector&);
-	Vector getPerpendicularComponent(const Vector&);
+	Vector getParallelComponent(Vector&);
+	double getParallelComponentValue(const Vector&);
+	Vector getPerpendicularComponent(Vector&);
 
-	void rotate(const Vector&, double);
-	void rotate(const Vector&);
+	void rotate(Vector&, double);
+	void rotate(Vector&);
 
-	Vector getRotation(const Vector&, double);
-	Vector getRotation(const Vector&);
+	Vector getRotation(Vector&, double);
+	Vector getRotation(Vector&);
 
 	std::string debug(std::string);
 
