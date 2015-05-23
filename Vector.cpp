@@ -1,7 +1,9 @@
 #include "Vector.h"
 #include "Tensor.h"
 #include <cmath>
+#include <sstream>
 
+using namespace phs;
 
 Vector::Vector()
 {
@@ -222,5 +224,20 @@ Vector Vector::getRotation(Vector& a)
 	return getRotation(a, a.abs());
 }
 
+std::string Vector::debug(std::string msg)
+{
+	std::stringstream ss;
+	ss << msg <<"(x= " << comp[0] << "| y=" << comp[1] << "| z=" << comp[2] << ")";
+	return ss.str();
+}
 
+bool Vector::operator==(const Vector& v)
+{
+	return (comp[0]==v.getX() && comp[1]==v.getY() && comp[2]==v.getZ());
+}
+
+bool Vector::approaches(const Vector& v, double d)
+{
+	return ((*this)-v).absSqr()<=d;
+}
 

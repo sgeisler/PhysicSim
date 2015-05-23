@@ -1,5 +1,6 @@
 #include "Tensor.h"
 
+using namespace phs;
 
 Tensor::Tensor()
 {
