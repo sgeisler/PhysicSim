@@ -1,5 +1,6 @@
 #pragma once
 #include <stdexcept>
+#include <string>
 
 namespace phs
 {
@@ -23,7 +24,12 @@ namespace phs
 			}
 		}
 	
+		void transpose();
+		void invert();
+
 		~Tensor();
+
+		std::string debug(std::string);
 	};
 
 }

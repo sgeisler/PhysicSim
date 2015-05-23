@@ -1,5 +1,7 @@
 #include "Tensor.h"
 
+#include <sstream>
+
 using namespace phs;
 
 Tensor::Tensor()
@@ -44,3 +46,47 @@ Tensor::Tensor(double xa, double xb, double xc, double ya, double yb, double yc,
 
 Tensor::~Tensor()
 {}
+
+
+void Tensor::transpose()
+{
+	double fnord;
+	
+	fnord = comp[1][0];
+	comp[1][0] = comp[0][1];
+	comp[0][1] = fnord;
+
+	fnord = comp[2][0];
+	comp[2][0] = comp[0][2];
+	comp[0][2] = fnord;
+
+	fnord = comp[2][1];
+	comp[2][1] = comp[1][2];
+	comp[1][2] = fnord;
+}
+
+void Tensor::invert()
+{
+	comp[0][0]*=-1;
+	comp[0][1]*=-1;
+	comp[0][2]*=-1;
+	comp[1][0]*=-1;
+	comp[1][1]*=-1;
+	comp[1][2]*=-1;
+	comp[2][0]*=-1;
+	comp[2][1]*=-1;
+	comp[2][2]*=-1;
+}
+
+
+
+
+std::string Tensor::debug(std::string msg)
+{
+	std::stringstream ss;
+	ss << msg << '\n';
+	ss << "/  " << comp[0][0] << " | " << comp[0][1] << " | " << comp[0][2] << "  \\" << '\n';
+	ss << "|  " << comp[1][0] << " | " << comp[1][1] << " | " << comp[1][2] << "  |" << '\n';
+	ss << "\\  " << comp[2][0] << " | " << comp[2][1] << " | " << comp[2][2] << "  /" << '\n';
+	return ss.str();
+}
