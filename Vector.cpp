@@ -224,6 +224,24 @@ Vector Vector::getRotation(Vector& a)
 	return getRotation(a, a.abs());
 }
 
+Tensor Vector::getRotationMatrix(double angle)
+{
+	double cos = std::cos(angle);
+    double sin = std::sin(angle);
+	Vector a = getNormalized();
+        
+    return Tensor(
+		a.getX()*a.getX()*(1.0-cos)+cos,			a.getY()*a.getX()*(1.0-cos)-a.getZ()*sin,	a.getZ()*a.getX()*(1.0-cos)+a.getY()*sin,
+		a.getX()*a.getY()*(1.0-cos)+a.getZ()*sin,	a.getY()*a.getY()*(1.0-cos)+cos,			a.getZ()*a.getY()*(1.0-cos)-a.getX()*sin,
+		a.getX()*a.getZ()*(1.0-cos)-a.getY()*sin,	a.getY()*a.getZ()*(1.0-cos)+a.getX()*sin,	a.getZ()*a.getZ()*(1.0-cos)+cos
+	);
+}
+
+Tensor Vector::getRotationMatrix()
+{
+	return getRotationMatrix(abs());
+}
+
 std::string Vector::debug(std::string msg)
 {
 	std::stringstream ss;

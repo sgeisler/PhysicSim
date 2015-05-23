@@ -49,6 +49,9 @@ namespace phs
 		void rotate(Vector&, double);
 		void rotate(Vector&);
 
+		Tensor getRotationMatrix(double);
+		Tensor getRotationMatrix();
+
 		Vector getRotation(Vector&, double);
 		Vector getRotation(Vector&);
 
@@ -60,5 +63,6 @@ namespace phs
 
 		~Vector();
 	};
+
 
 };
