@@ -3,6 +3,7 @@
 #include <string>
 
 
+
 namespace phs
 {
 
@@ -14,7 +15,7 @@ namespace phs
 		Tensor(const Tensor&);
 		Tensor(double xa, double xb, double xc, double ya, double yb, double yc, double za, double zb, double zc);
 	
-		double get(unsigned int a, unsigned int b)const
+		inline double get(unsigned int a, unsigned int b)const
 		{
 			if(a<3&&b<3)
 			{
