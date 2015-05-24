@@ -54,7 +54,7 @@ inline double Vector::absSqr()const
 
 inline double Vector::abs()const
 {
-	return std::sqrt(absSqr());
+	return std::sqrt((comp[0]*comp[0]+comp[1]*comp[1]+comp[2]*comp[2]));
 }
 
 Vector Vector::operator=(const Vector& v)
