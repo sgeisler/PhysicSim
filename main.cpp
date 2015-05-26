@@ -92,13 +92,6 @@ void integrationTest()
 
 void integration2Test()
 {
-	/*
-	Vector* p = new Vector(1,2,3);
-	std::cout << p->debug("p") << std::endl;
-	p->operator+=(*p);
-	std::cout << p->debug("p") << std::endl;
-	*/
-
 	Vector s = Vector(16,0,0);
 	Vector v = Vector(0,0,0);
 	double dt = 1;
