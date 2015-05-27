@@ -92,13 +92,22 @@ void integrationTest()
 
 void integration2Test()
 {
-	Vector s = Vector(16,0,0);
-	Vector v = Vector(0,0,0);
-	double dt = 1;
-	unsigned int basicPrecision = 10;
-	phs::integrate_euler(&s, &v, accl, dt, basicPrecision);
-	std::cout << s.debug("s:") << std::endl;
-	std::cout << v.debug("v:") << std::endl;
+	Vector s;
+	Vector v;
+	unsigned int delta_t = 20;
+
+	for(unsigned int bp=1000; bp<=1000; bp++)
+	{
+		s = Vector(16,0,0);
+		v = Vector(0,0,0);
+		std::cout << bp << std::endl;
+		for(unsigned int n=0; n<delta_t; n++)
+		{
+			phs::integrate_euler(&s, &v, accl, 1.0, bp);
+			std::cout << s.debug("s:") << std::endl;
+			std::cout << v.debug("   v:") << std::endl;
+		}
+	}
 }
 
 double testIntegrand(double x)

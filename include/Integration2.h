@@ -21,8 +21,10 @@ namespace phs
 		dt /= precision;
 		for(unsigned int c=0; c<precision; c++)
 		{
-			s->operator+=((*v)*dt);
-			v->operator+=((a(*s))*dt);
+			Vector v2 = v->operator+((a(*s))*dt);
+			s->operator+=(( ((*v)*dt)+v2 )*0.5);
+			//v = &v2;
+			*v = v2;
 		}
 	}
 
