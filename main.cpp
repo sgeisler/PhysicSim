@@ -89,7 +89,7 @@ static void scroll_callback(GLFWwindow* window, double x, double y)
 	//std::cout << x;
 	//std::cout << "  ";
 	//std::cout << y << std::endl; 
-	c_e*=(1.0+(0.05*y));
+	c_e*=(1.0-(0.05*y));
 }
 
 
@@ -143,11 +143,12 @@ void vectorTest()
 
 void integrationTest()
 {
-	double a=0, b=2000;
+	double a=-2, b=8;
+	
 	//Vector a, b;
 	//a = Vector(0,0,0);
 	//b = Vector(4,0,0);
-
+	/*
 	for(int c=1; c<=100; c++)
 	{
 		std::cout << c << std::endl;
@@ -163,6 +164,7 @@ void integrationTest()
 		
 		std::cout << '\n';
 	}
+	*/
 }
 
 /*void integration2Test()
@@ -185,9 +187,38 @@ void integrationTest()
 	}
 }*/
 
+void functionDrawingTest()
+{
+	double a=-4, b=4;
+	int c = 16;
+	double d = (b-a)/c;
+
+	glBegin(GL_LINES);
+		glColor3d(0,0.5,1);
+		//glVertex3d(a, 0, 0);
+		for(double x=a; x<b; x+=d)
+		{
+			for(double y=a; y<b; y+=d)
+			{
+				glVertex3d(x, y, testIntegrand(x*x+y*y));
+				glVertex3d(x, y+d, testIntegrand(x*x+(y+d)*(y+d)));
+				glVertex3d(x+d, y+d, testIntegrand((x+d)*(x+d)+(y+d)*(y+d)));
+				glVertex3d(x+d, y, testIntegrand((x+d)*(x+d)+y*y));
+
+				glVertex3d(x, y, testIntegrand(x*x+y*y));
+				glVertex3d(x+d, y, testIntegrand((x+d)*(x+d)+y*y));
+				glVertex3d(x, y+d, testIntegrand(x*x+(y+d)*(y+d)));
+				glVertex3d(x+d, y+d, testIntegrand((x+d)*(x+d)+(y+d)*(y+d)));
+			}
+		}
+		//glVertex3d(b, 0, 0);
+	glEnd();
+}
+
 double testIntegrand(double x)
 {
-	return exp(-0.5*(x*x))/std::sqrt(2*PI);
+	//return exp(-0.5*(x*x))/std::sqrt(2*PI);
+	return (0.25*x)-4;
 }
 
 Vector testIntegrand(Vector x)
@@ -255,15 +286,19 @@ int main()
 		glBegin(GL_LINES);
 			glColor3d(1,0,0);
 			glVertex3d(10, 0, 0);
-			glVertex3d(-10, 0, 0);
+			glVertex3d(0, 0, 0);
 			glColor3d(0,1,0);
 			glVertex3d(0, 10, 0);
-			glVertex3d(0, -10, 0);
+			glVertex3d(0, 0, 0);
 			glColor3d(0,0,1);
 			glVertex3d(0, 0, 10);
-			glVertex3d(0, 0, -10);
+			glVertex3d(0, 0, 0);
 		glEnd();
 		glPushMatrix();
+
+		functionDrawingTest();
+		glPushMatrix();
+		glPopMatrix();
 
 		glRotatef((float) glfwGetTime() * 50.f, 0.f, 0.f, 1.f);
         
