@@ -23,6 +23,7 @@ namespace phs
 		{
 			Vector v2 = v->operator+((a(*s))*dt);
 			s->operator+=(( ((*v)*dt)+v2 )*0.5);
+			//std::cout << s->debug("s_n:") << std::endl;
 			//v = &v2;
 			*v = v2;
 		}

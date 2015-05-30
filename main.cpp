@@ -1,3 +1,6 @@
+#include <GL\glew.h>
+#include <GLFW\glfw3.h>
+
 #include <iostream>
 #include <stdio.h>
 #include <cmath>
@@ -5,17 +8,89 @@
 #include "Vector.h"
 #include "Tensor.h"
 #include "Logger.h"
-//#include "Integration.h"
-#include "Integration2.h"
+#include "Integration.h"
+//#include "Integration2.h"
 
 using namespace phs;
 
 #define PI 3.14159265358979323846
 
-
+//Methods declaration
 double testIntegrand(double);
 Vector testIntegrand(Vector);
 Vector accl(Vector);
+
+
+//Variables declaration
+GLFWwindow *gcWindow;
+int width=1024, height=512;
+Vector c_e(1.0, 3.0, 2.0),
+	   c_c(0.0, 0.0, 0.0), 
+	   c_u(0.0, 0.0, 1.0);
+
+
+static void error_callback(int error, const char *description)
+{
+	fputs(description, stderr);
+	_fgetchar();
+}
+
+static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)  
+{
+	if ((key == GLFW_KEY_ESCAPE | key == GLFW_KEY_ENTER) && action == GLFW_PRESS)
+	{
+		glfwSetWindowShouldClose(window, GL_TRUE);  
+	}
+
+	if (key == GLFW_KEY_W && action == GLFW_PRESS)
+	{
+		Vector s = c_e.getPerpendicularComponent(Vector(0,0,1));
+		s.normalize();
+		c_e-=s;
+		c_c-=s;
+	}
+	if (key == GLFW_KEY_S && action == GLFW_PRESS)
+	{
+		Vector s = c_e.getPerpendicularComponent(Vector(0,0,1));
+		s.normalize();
+		c_e+=s;
+		c_c+=s;
+	}
+	if (key == GLFW_KEY_A && action == GLFW_PRESS)
+	{
+		Vector s = c_e.getPerpendicularComponent(Vector(0,0,1));
+		s.rotate(Vector(0,0,1), 0.5*PI);
+		s.normalize();
+		c_e-=s;
+		c_c-=s;
+	}
+	if (key == GLFW_KEY_D && action == GLFW_PRESS)
+	{
+		Vector s = c_e.getPerpendicularComponent(Vector(0,0,1));
+		s.rotate(Vector(0,0,1), -0.5*PI);
+		s.normalize();
+		c_e-=s;
+		c_c-=s;
+	}
+} 
+
+static void cursor_position_callback(GLFWwindow* window, double x, double y)
+{
+
+}
+
+static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+	
+}
+
+static void scroll_callback(GLFWwindow* window, double x, double y)
+{
+	//std::cout << x;
+	//std::cout << "  ";
+	//std::cout << y << std::endl; 
+	c_e*=(1.0+(0.05*y));
+}
 
 
 void vectorTest()
@@ -90,7 +165,7 @@ void integrationTest()
 	}
 }
 
-void integration2Test()
+/*void integration2Test()
 {
 	Vector s;
 	Vector v;
@@ -108,7 +183,7 @@ void integration2Test()
 			std::cout << v.debug("   v:") << std::endl;
 		}
 	}
-}
+}*/
 
 double testIntegrand(double x)
 {
@@ -127,13 +202,89 @@ Vector accl(Vector s)
 
 int main()
 {
-    std::cout << "Hello, World!" << std::endl;
+    //std::cout << "Hello, World!" << std::endl;
 
 	//vectorTest();
 	//integrationTest();
-	integration2Test();
+	//integration2Test();
 
-	std::cout << std::endl << "Press any key to quit." << std::endl;
-    getchar();
-    return 0;
+	glfwSetErrorCallback(error_callback);
+	if(!glfwInit())
+	{
+		exit(EXIT_FAILURE);
+	}
+	gcWindow = glfwCreateWindow(width, height, "Graphics Context", NULL, NULL);
+	if(!gcWindow)
+	{
+		fprintf(stderr, "Failed to open GLFW Window");
+		glfwTerminate();
+		exit(EXIT_FAILURE);
+	}
+	glfwMakeContextCurrent(gcWindow);
+	glfwSwapInterval(1);
+
+	glfwSetKeyCallback(gcWindow, key_callback);
+	glfwSetCursorPosCallback(gcWindow, cursor_position_callback);
+	glfwSetMouseButtonCallback(gcWindow, mouse_button_callback);
+	glfwSetScrollCallback(gcWindow, scroll_callback);
+
+	std::cout << "Press [ENTER] to exit the program." << std::endl;
+	std::cout << "Ironic, isn't it?" << std::endl;
+
+	while(!glfwWindowShouldClose(gcWindow))
+	{
+		float ratio;
+        int width, height;
+
+        glfwGetFramebufferSize(gcWindow, &width, &height);
+        ratio = width / (float) height;
+        glViewport(0, 0, width, height);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        //glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+        gluPerspective(45, ratio, 1.0, 1000.0);
+		gluLookAt(
+			c_e.getX(), c_e.getY(), c_e.getZ(),
+			c_c.getX(), c_c.getY(), c_c.getZ(),
+			c_u.getX(), c_u.getY(), c_u.getZ()
+		);
+		glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        
+		glBegin(GL_LINES);
+			glColor3d(1,0,0);
+			glVertex3d(10, 0, 0);
+			glVertex3d(-10, 0, 0);
+			glColor3d(0,1,0);
+			glVertex3d(0, 10, 0);
+			glVertex3d(0, -10, 0);
+			glColor3d(0,0,1);
+			glVertex3d(0, 0, 10);
+			glVertex3d(0, 0, -10);
+		glEnd();
+		glPushMatrix();
+
+		glRotatef((float) glfwGetTime() * 50.f, 0.f, 0.f, 1.f);
+        
+		glBegin(GL_TRIANGLES);
+			glColor3f(1.f, 0.f, 0.f);
+			glVertex3f(-0.6f, -0.4f, 0.f);
+			glColor3f(0.f, 1.f, 0.f);
+			glVertex3f(0.6f, -0.4f, 0.f);
+			glColor3f(0.f, 0.f, 1.f);
+			glVertex3f(0.f, 0.6f, 0.f);
+        glEnd();
+		glPopMatrix();
+
+        glfwSwapBuffers(gcWindow);
+        glfwPollEvents();
+	}
+
+	glfwDestroyWindow(gcWindow);
+	glfwTerminate();
+
+	//std::cout << std::endl << "Press any key to quit." << std::endl;
+    //getchar();
+    exit(EXIT_SUCCESS);
 }
