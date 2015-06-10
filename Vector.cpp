@@ -251,3 +251,4 @@ bool Vector::approaches(const Vector& v, double dq)
 	return ((*this)-v).absSqr()<=dq;
 }
 
+//TODO implement methods with pointers as args.

@@ -32,6 +32,10 @@ namespace phs
 		void operator-=(const Vector&);
 		void operator*=(const double);
 		void operator*=(const Tensor&);
+
+		void operator+=(const Vector*);
+		void operator-=(const Vector*);
+		void operator*=(const Tensor*);
 	
 		Vector getNormalized();
 		Vector getInverted();
@@ -41,6 +45,12 @@ namespace phs
 		double operator*(const Vector&);
 		Vector operator*(const Tensor&);
 		Vector cross(const Vector&);
+
+		Vector operator+(const Vector*);
+		Vector operator-(const Vector*);
+		double operator*(const Vector*);
+		Vector operator*(const Tensor*);
+		Vector cross(const Vector*);
 
 		Vector getParallelComponent(Vector&);
 		double getParallelComponentValue(const Vector&);

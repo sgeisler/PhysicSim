@@ -10,6 +10,7 @@
 #include "Logger.h"
 #include "Integration.h"
 //#include "Integration2.h"
+#include <graphicsUtilities.h>
 
 using namespace phs;
 
@@ -23,10 +24,13 @@ Vector accl(Vector);
 
 //Variables declaration
 GLFWwindow *gcWindow;
+namespace mouse
+{
+	double x=0, y=0, dx=0, dy=0;
+	bool leftDown=false, rightDown=false, middleDown=false;
+}
 int width=1024, height=512;
-Vector c_e(1.0, 3.0, 2.0),
-	   c_c(0.0, 0.0, 0.0), 
-	   c_u(0.0, 0.0, 1.0);
+glu::Camera cam(1,3,2,0,0,0,0,0,1,30);
 
 
 static void error_callback(int error, const char *description)
@@ -42,45 +46,52 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		glfwSetWindowShouldClose(window, GL_TRUE);  
 	}
 
-	if (key == GLFW_KEY_W && action == GLFW_PRESS)
+	if (key == GLFW_KEY_W && (action == GLFW_PRESS || action == GLFW_REPEAT))
 	{
-		Vector s = c_e.getPerpendicularComponent(Vector(0,0,1));
-		s.normalize();
-		c_e-=s;
-		c_c-=s;
+		cam.translate(CAMERA_FORWARD, true, 0.1);
 	}
-	if (key == GLFW_KEY_S && action == GLFW_PRESS)
+	if (key == GLFW_KEY_S && (action == GLFW_PRESS || action == GLFW_REPEAT))
 	{
-		Vector s = c_e.getPerpendicularComponent(Vector(0,0,1));
-		s.normalize();
-		c_e+=s;
-		c_c+=s;
+		cam.translate(CAMERA_BACKWARD, true, 0.1);
 	}
-	if (key == GLFW_KEY_A && action == GLFW_PRESS)
+	if (key == GLFW_KEY_A && (action == GLFW_PRESS || action == GLFW_REPEAT))
 	{
-		Vector s = c_e.getPerpendicularComponent(Vector(0,0,1));
-		s.rotate(Vector(0,0,1), 0.5*PI);
-		s.normalize();
-		c_e-=s;
-		c_c-=s;
+		cam.translate(CAMERA_LEFT, true, 0.1);
 	}
-	if (key == GLFW_KEY_D && action == GLFW_PRESS)
+	if (key == GLFW_KEY_D && (action == GLFW_PRESS || action == GLFW_REPEAT))
 	{
-		Vector s = c_e.getPerpendicularComponent(Vector(0,0,1));
-		s.rotate(Vector(0,0,1), -0.5*PI);
-		s.normalize();
-		c_e-=s;
-		c_c-=s;
+		cam.translate(CAMERA_RIGHT, true, 0.1);
+	}
+	if (key == GLFW_KEY_E && (action == GLFW_PRESS || action == GLFW_REPEAT))
+	{
+		//cam.rotate(0,0,-0.0314);
+	}
+	if (key == GLFW_KEY_Q && (action == GLFW_PRESS || action == GLFW_REPEAT))
+	{
+		//cam.rotate(0,0,0.0314);
 	}
 } 
 
 static void cursor_position_callback(GLFWwindow* window, double x, double y)
 {
-
+	mouse::dx = x-mouse::x;
+	mouse::dy = y-mouse::y;
+	mouse::x = x;
+	mouse::y = y;
 }
 
 static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
+	if(button == GLFW_MOUSE_BUTTON_RIGHT)
+	{
+		if(action == GLFW_PRESS)
+		{
+			mouse::leftDown = true;
+		}else if(action == GLFW_RELEASE)
+		{
+			mouse::leftDown = false;
+		}
+	}
 	
 }
 
@@ -89,7 +100,8 @@ static void scroll_callback(GLFWwindow* window, double x, double y)
 	//std::cout << x;
 	//std::cout << "  ";
 	//std::cout << y << std::endl; 
-	c_e*=(1.0-(0.05*y));
+	//c_e*=(1.0-(0.05*y));
+	cam.zoom(y);
 }
 
 
@@ -240,11 +252,13 @@ int main()
 	//integration2Test();
 
 	glfwSetErrorCallback(error_callback);
+	
 	if(!glfwInit())
 	{
 		exit(EXIT_FAILURE);
 	}
 	gcWindow = glfwCreateWindow(width, height, "Graphics Context", NULL, NULL);
+	//gcWindow = glfwCreateWindow(1920, 1080, "Graphics Context", glfwGetPrimaryMonitor(), NULL);
 	if(!gcWindow)
 	{
 		fprintf(stderr, "Failed to open GLFW Window");
@@ -262,6 +276,8 @@ int main()
 	std::cout << "Press [ENTER] to exit the program." << std::endl;
 	std::cout << "Ironic, isn't it?" << std::endl;
 
+	glEnable(GL_DEPTH_TEST);
+
 	while(!glfwWindowShouldClose(gcWindow))
 	{
 		float ratio;
@@ -270,16 +286,12 @@ int main()
         glfwGetFramebufferSize(gcWindow, &width, &height);
         ratio = width / (float) height;
         glViewport(0, 0, width, height);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         //glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
-        gluPerspective(45, ratio, 1.0, 1000.0);
-		gluLookAt(
-			c_e.getX(), c_e.getY(), c_e.getZ(),
-			c_c.getX(), c_c.getY(), c_c.getZ(),
-			c_u.getX(), c_u.getY(), c_u.getZ()
-		);
+        gluPerspective(cam.getFOV(), ratio, 1.0, 1000.0);
+		glu::lookAt(&cam);
 		glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
         
@@ -314,6 +326,12 @@ int main()
 
         glfwSwapBuffers(gcWindow);
         glfwPollEvents();
+		if(mouse::leftDown)
+		{
+			cam.rotate(mouse::dx*-0.01, mouse::dy*0.01, 0);
+			mouse::dx=0;
+			mouse::dy=0;
+		}
 	}
 
 	glfwDestroyWindow(gcWindow);
