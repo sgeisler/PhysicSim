@@ -4,13 +4,18 @@
 #include <Vector.h>
 #include <Tensor.h>
 
-#define CAMERA_FORWARD (int)0
-#define CAMERA_BACKWARD (int)1
-#define CAMERA_LEFT (int)2
-#define CAMERA_RIGHT (int)3
+#include <iostream>
+#include <stdio.h>
+#include <cmath>
+
+#define CAMERA_FORWARD 0
+#define CAMERA_BACKWARD 1
+#define CAMERA_LEFT 2
+#define CAMERA_RIGHT 3
 
 namespace glu
 {	
+	
 	class Camera
 	{
 		public:
@@ -25,7 +30,7 @@ namespace glu
 			inline double getUX(){return ux;}
 			inline double getUY(){return uy;}
 			inline double getUZ(){return uz;}
-			inline double getFOV(){return fov;};
+			inline double getFOV(){return fov;}
 
 			inline void zoom(double d)
 			{
@@ -140,4 +145,67 @@ namespace glu
 		);
 	}
 
+	//relative 2D stuff
+	static double x2dMin, x2dMax, y2dMin, y2dMax, aspectRatio;
+	static double xScl, yScl;
+		
+
+	inline void ortho2d(double xLeft, double xRight, double yTop, double yBottom)
+	{
+		x2dMin = xLeft;
+		x2dMax = xRight;
+		y2dMin = yTop;
+		y2dMax = yBottom;
+
+		xScl = x2dMax-x2dMin;
+		yScl = y2dMax-y2dMin;
+	}
+	
+	inline void resizeWindow(double ar)
+	{
+		aspectRatio = ar;
+	}
+
+	inline void vertex2d(double x, double y)
+	{
+		//x = 2*x/xScl+(-1-2*x2dMin/xScl);
+		//y = 2*y/yScl+(-1-2*y2dMin/yScl);
+		
+		glVertex3d(x*0.062*aspectRatio, y*-0.062, 0);
+	}
+
+	inline void prepareMatrix2d(Camera* cam)
+	{
+		glTranslated(cam->getCX(), cam->getCY(), cam->getCZ());
+		//std::cout << cam->getCX() << std::endl;
+		
+		phs::Vector eye(cam->getEX()-cam->getCX(), cam->getEY()-cam->getCY(), cam->getEZ()-cam->getCZ());
+		double angle = std::acos((eye.getZ())/eye.abs());
+		phs::Vector axis = eye.cross(phs::Vector(0,0,1));
+		//std::cout << angle << std::endl;
+		//std::cout << axis.debug("") << std::endl;
+		glRotated(angle*180/3.141592, axis.getX()*-1, axis.getY()*-1, axis.getZ()*1);
+		
+		glTranslated(0, 0, (eye.abs())-0.15);
+		
+		eye = eye.getPerpendicularComponent(phs::Vector(0,0,1));
+		angle = std::acos(eye.getY()/eye.abs());
+		if(eye.getX()<0)
+		{
+			angle *= -1;
+		}
+		if(cam->getUZ()<0)
+		{
+			angle+=3.141592;
+		}
+		glRotated(180-(angle*180/3.141592),0,0,1);
+		
+	}
+	inline void pushMatrix2d()
+	{
+		glPushMatrix();
+	}
+
 }
+
+

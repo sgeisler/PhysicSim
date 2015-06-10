@@ -30,7 +30,7 @@ namespace mouse
 	bool leftDown=false, rightDown=false, middleDown=false;
 }
 int width=1024, height=512;
-glu::Camera cam(1,3,2,0,0,0,0,0,1,30);
+glu::Camera cam(1,3,0,0,0,0,0,0,1,45);
 
 
 static void error_callback(int error, const char *description)
@@ -102,6 +102,11 @@ static void scroll_callback(GLFWwindow* window, double x, double y)
 	//std::cout << y << std::endl; 
 	//c_e*=(1.0-(0.05*y));
 	cam.zoom(y);
+}
+
+void window_size_callback(GLFWwindow* window, int width, int height)
+{
+	glu::resizeWindow((double)width/((double) height));
 }
 
 
@@ -272,11 +277,17 @@ int main()
 	glfwSetCursorPosCallback(gcWindow, cursor_position_callback);
 	glfwSetMouseButtonCallback(gcWindow, mouse_button_callback);
 	glfwSetScrollCallback(gcWindow, scroll_callback);
+	glfwSetWindowSizeCallback(gcWindow, window_size_callback);
 
 	std::cout << "Press [ENTER] to exit the program." << std::endl;
 	std::cout << "Ironic, isn't it?" << std::endl;
 
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glu::ortho2d(-1,1,-1,1);
+	//glu::ortho2d(0,1024,0,512);
+	glu::resizeWindow((double) width / (double) height);
 
 	while(!glfwWindowShouldClose(gcWindow))
 	{
@@ -290,7 +301,7 @@ int main()
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         //glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
-        gluPerspective(cam.getFOV(), ratio, 1.0, 1000.0);
+        gluPerspective(cam.getFOV(), ratio, 0.1, 1000.0);
 		glu::lookAt(&cam);
 		glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
@@ -309,8 +320,8 @@ int main()
 		glPushMatrix();
 
 		functionDrawingTest();
-		glPushMatrix();
 		glPopMatrix();
+		glPushMatrix();
 
 		glRotatef((float) glfwGetTime() * 50.f, 0.f, 0.f, 1.f);
         
@@ -321,8 +332,26 @@ int main()
 			glVertex3f(0.6f, -0.4f, 0.f);
 			glColor3f(0.f, 0.f, 1.f);
 			glVertex3f(0.f, 0.6f, 0.f);
-        glEnd();
+		glEnd();
 		glPopMatrix();
+		glPushMatrix();
+		
+		glu::prepareMatrix2d(&cam);
+		glBegin(GL_QUADS);
+			glColor4d(0.0, 0.0, 1.0, 0.4);
+			glu::vertex2d(0,1);
+			glu::vertex2d(1,1);
+			glu::vertex2d(1,0);
+			glu::vertex2d(0,0);
+		glEnd();
+		glBegin(GL_LINES);
+			glColor4d(1.0, 0.5, 0.0, 0.8);
+			glu::vertex2d(0,0);
+			glu::vertex2d(0,1);
+		glEnd();
+		glu::pushMatrix2d();
+		glPopMatrix();
+		glPushMatrix();
 
         glfwSwapBuffers(gcWindow);
         glfwPollEvents();

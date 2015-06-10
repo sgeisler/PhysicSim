@@ -18,3 +18,4 @@ Camera::Camera(double e_x, double e_y, double e_z, double c_x, double c_y, doubl
 	uz = u_z;
 	fov = f;
 }
+
