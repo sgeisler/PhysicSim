@@ -5,9 +5,7 @@ using namespace std;
 
 int main()
 {
-    cout << "Hello, World!" << endl;
-
-
+    cout << "Press [ENTER] to exit the program.\nIronic, isn't it?" << endl;
 
     getchar();
     return 0;
