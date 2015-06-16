@@ -9,7 +9,7 @@ int main()
 {
     cout << "Press [ENTER] to exit the program.\nIronic, isn't it?" << endl;
 
-	GContext gc(600, 480, false, sf::ContextSettings(24, 8, 0, 4, 3));
+	GContext gc(1024, 768, false, sf::ContextSettings(24, 8, 0, 4, 3), 60);
 
 	gc.initGL();
 	gc.loopGL();
