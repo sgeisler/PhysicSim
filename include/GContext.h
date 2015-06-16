@@ -1,13 +1,17 @@
 #pragma once
 
 #include <SFML\Window.hpp>
+#include "GUtils.h"
 
 class GContext
 {
 public:
 	sf::Window* window;
+	Camera cam;
+	double aspectRatio;
+	GLUquadric* gluquad;
 	
-	GContext(unsigned int width, unsigned int height, bool fullscreen, sf::ContextSettings cs);
+	GContext(unsigned int width, unsigned int height, bool fullscreen, sf::ContextSettings cs, unsigned int fps);
 	virtual ~GContext(void);
 
 	void initGL();
