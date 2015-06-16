@@ -178,7 +178,7 @@ Vector Vector::getPerpendicularComponent(Vector& v)
 	return (*this)-getParallelComponent(v);
 }
 
-void Vector::rotate(Vector& a, double angle)
+void Vector::rotate(Vector a, double angle)
 {
 	double cos = std::cos(angle);
     double sin = std::sin(angle);
@@ -192,12 +192,12 @@ void Vector::rotate(Vector& a, double angle)
 	(*this)*=transformationMatrix;
 }
 
-void Vector::rotate(Vector& a)
+void Vector::rotate(Vector a)
 {
 	rotate(a, a.abs());
 }
 
-Vector Vector::getRotation(Vector& a, double angle)
+Vector Vector::getRotation(Vector a, double angle)
 {
 	double cos = std::cos(angle);
     double sin = std::sin(angle);
@@ -211,7 +211,7 @@ Vector Vector::getRotation(Vector& a, double angle)
 	return (*this)*transformationMatrix;
 }
 
-Vector Vector::getRotation(Vector& a)
+Vector Vector::getRotation(Vector a)
 {
 	return getRotation(a, a.abs());
 }

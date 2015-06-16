@@ -46,14 +46,14 @@ namespace phs
 		double getParallelComponentValue(const Vector&);
 		Vector getPerpendicularComponent(Vector&);
 
-		void rotate(Vector&, double);
-		void rotate(Vector&);
+		void rotate(Vector, double);
+		void rotate(Vector);
 
 		Tensor getRotationMatrix(double);
 		Tensor getRotationMatrix();
 
-		Vector getRotation(Vector&, double);
-		Vector getRotation(Vector&);
+		Vector getRotation(Vector, double);
+		Vector getRotation(Vector);
 
 		std::string debug(std::string);
 
