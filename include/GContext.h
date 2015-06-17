@@ -12,6 +12,7 @@ public:
 	GLUquadric* gluquad;
 	
 	GContext(unsigned int width, unsigned int height, bool fullscreen, sf::ContextSettings cs, unsigned int fps);
+	GContext(unsigned int width, unsigned int height, sf::Uint32 sm, sf::ContextSettings cs, unsigned int fps);
 	virtual ~GContext(void);
 
 	void initGL();
