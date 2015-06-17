@@ -22,6 +22,8 @@ public:
 	void translateFlat(double, double, double);
 	void translateParallel(double, double, double);
 	inline void zoom(double r){eye*=(1.0+(0.05*r));}
+	inline void zoomFOV(double r){ fov+=r; if(fov<10)fov=10; if(fov>120)fov=120;	}
+	//Because who needs readable code, right?
 	void orthogonalize();
 
 	inline double getEX()const{return eye.getX()+center.getX();}
@@ -40,8 +42,8 @@ public:
 
 };
 
-void gluLookAt(Camera& cam);
-void glVertex3d(Vector& v);
+inline void gluLookAt(Camera& cam){::gluLookAt( cam.getEX(), cam.getEY(), cam.getEZ(), cam.getCX(), cam.getCY(), cam.getCZ(), cam.getUX(), cam.getUY(), cam.getUZ() );}
+inline void glVertex3d(Vector& v){::glVertex3d(v.getX(), v.getY(), v.getZ());}
 void glVector3d(GLUquadric*, Vector&, Vector&);
 void glVector3d(GLUquadric*, Vector&);
 
