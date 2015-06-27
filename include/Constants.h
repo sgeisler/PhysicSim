@@ -4,7 +4,7 @@
 #include "Vector.h"
 
 #define PI 3.14159265358979323846
-//#define ZE 2.71828182845904523536
+//#define N_E 2.71828182845904523536
 
 //#define GC 6.67384E-11;
 
@@ -13,11 +13,14 @@
 //const Vector E_Y(0,1,0);
 //const Vector E_Z(0,0,1);
 
-const float LIGHT_POSITION[] = {1.0, 1.0, 1.0, 1.0};
-const float LIGHT_DIFFUSE[] = {0.8, 0.8, 0.8, 1.0};
-const float LIGHT_AMBIENT[] = {0.2, 0.2, 0.2, 1.0};
+const float LIGHT_POSITION[] = {0.0, 0.0, 1.0, 0.0};
+const float LIGHT_DIFFUSE[] = {0.75, 0.75, 0.75, 1.0};
+const float LIGHT_AMBIENT[] = {0.1, 0.1, 0.1, 1.0};
+const float LIGHT_SPECULAR[] = {1.0, 1.0, 1.0, 1.0};
 
 const float COLOR_CLEAR[] = {30.0/255.0, 30.0/255.0, 30.0/255.0, 1.0};
+
+const float MAT_SHININESS[] = {120.0f};
 
 const float MAT_WHITE[] = {1.0, 1.0, 1.0, 1.0};
 const float MAT_BLACK[] = {0.0, 0.0, 0.0, 1.0};
