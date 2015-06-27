@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Vector.h"
-#include <SFML\OpenGL.hpp>
-#include <gl\GLU.h>
+#include <SFML/OpenGL.hpp>
+#include <gl/GLU.h>
 
 using namespace phs;
 
@@ -43,7 +43,27 @@ public:
 };
 
 inline void gluLookAt(Camera& cam){::gluLookAt( cam.getEX(), cam.getEY(), cam.getEZ(), cam.getCX(), cam.getCY(), cam.getCZ(), cam.getUX(), cam.getUY(), cam.getUZ() );}
-inline void glVertex3d(Vector& v){::glVertex3d(v.getX(), v.getY(), v.getZ());}
-void glVector3d(GLUquadric*, Vector&, Vector&);
-void glVector3d(GLUquadric*, Vector&);
+inline void glVertexv(const Vector& v){::glVertex3d(v.getX(), v.getY(), v.getZ());}
+void glVector3d(GLUquadric*, Vector&, Vector&, unsigned int slices=4);
+void glVector3d(GLUquadric*, Vector&, unsigned int=4);
+void glVector3d(Vector&, Vector&);
+void glVector3d(Vector&);
+void glTriangle(const Vector&, const Vector&, const Vector&);
+inline void glNormal3v(const Vector& a, const Vector& b, const Vector& c)
+{
+	double px,py,pz,qx,qy,qz;
+	px = (b.getX()-a.getX());
+	py = (b.getY()-a.getY());
+	pz = (b.getZ()-a.getZ());
+	qx = (c.getX()-a.getX());
+	qy = (c.getY()-a.getY());
+	qz = (c.getZ()-a.getZ());
+	glNormal3d(
+		py*qz-pz*qy,
+		pz*qx-px*qz,
+		px*qy-py*qx
+	);
+}
+inline void glNormalv(const Vector& v){glNormal3d(v.getX(), v.getY(), v.getZ());}
+inline void glTranslatev(const Vector& v){glTranslated(v.getX(), v.getY(), v.getZ());}
 

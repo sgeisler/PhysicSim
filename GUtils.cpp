@@ -1,7 +1,7 @@
-#include "include\GUtils.h"
+#include "include/GUtils.h"
 
-#include <SFML\OpenGL.hpp>
-#include <gl\GLU.h>
+#include <SFML/OpenGL.hpp>
+#include <gl/GLU.h>
 #include "Constants.h"
 
 using namespace phs;
@@ -103,7 +103,44 @@ void Camera::translateParallel(double x, double y, double z)
 	center += (right*x + up*y + fwd*z);
 }
 
-void ::glVector3d(GLUquadric* gluQuad, Vector& o, Vector& p)
+void glVector3d(GLUquadric* gluquad, Vector& o, Vector& p, unsigned int slices)
+{
+	glPushMatrix();
+		glTranslated(o.getX(), o.getY(), o.getZ());
+		Vector axis = p.cross(Vector(0,0,1));
+		double angle = std::acos(p.getZ()/p.abs());
+		glRotated(180.0, 0.0, 0.0, 1.0);
+		glRotated(angle*180/PI, axis.getX(), axis.getY(), axis.getZ());
+		
+		glBegin(GL_LINES);
+			glVertex3d(0,0,0);
+			glVertex3d(0,0,p.abs()*0.85);
+		glEnd();
+		glTranslated(0.0, 0.0, p.abs()*0.85);
+		::gluCylinder(gluquad, p.abs()*0.05, 0, p.abs()*0.15, slices, 1);
+		//::gluDisk(gluquad, 0, p.abs()*0.05, slices, 1);
+	glPopMatrix();
+}
+
+void glVector3d(GLUquadric* gluquad, Vector& p, unsigned int slices)
+{
+	glPushMatrix();
+		Vector axis = p.cross(Vector(0,0,1));
+		double angle = std::acos(p.getZ()/p.abs());
+		glRotated(180.0, 0.0, 0.0, 1.0);
+		glRotated(angle*180/PI, axis.getX(), axis.getY(), axis.getZ());
+		
+		glBegin(GL_LINES);
+			glVertex3d(0,0,0);
+			glVertex3d(0,0,p.abs()*0.85);
+		glEnd();
+		glTranslated(0.0, 0.0, p.abs()*0.85);
+		::gluCylinder(gluquad, p.abs()*0.05, 0, p.abs()*0.15, slices, 1);
+		//::gluDisk(gluquad, 0, p.abs()*0.05, slices, 1);
+	glPopMatrix();
+}
+
+void glVector3d(Vector& o, Vector& p)
 {
 	glPushMatrix();
 		glTranslated(o.getX(), o.getY(), o.getZ());
@@ -142,7 +179,7 @@ void ::glVector3d(GLUquadric* gluQuad, Vector& o, Vector& p)
 	glPopMatrix();
 }
 
-void ::glVector3d(GLUquadric* gluQuad, Vector& p)
+void glVector3d(Vector& p)
 {
 	glPushMatrix();
 		Vector axis = p.cross(Vector(0,0,1));
@@ -176,7 +213,19 @@ void ::glVector3d(GLUquadric* gluQuad, Vector& p)
 			glVertex3d(-b,0,0);
 		
 		glEnd();
-		//::gluCylinder(gluQuad, p.abs()*0.05, 0.0, p.abs()*0.15, 4, 1);
 	glPopMatrix();
+}
+
+void glTriangle(const Vector& a, const Vector& b, const Vector& c)
+{
+	//glNormal3v(a,b,c);
+	glBegin(GL_TRIANGLES);
+		glNormalv(a);
+		glVertexv(a);
+		glNormalv(b);
+		glVertexv(b);
+		glNormalv(c);
+		glVertexv(c);
+	glEnd();
 }
 
