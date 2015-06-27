@@ -1,7 +1,6 @@
-#include "include\GContext.h"
+#include "include/GContext.h"
 
-#include <SFML\OpenGL.hpp>
-#include <gl\GLU.h>
+#include <SFML/OpenGL.hpp>
 
 #include "Constants.h"
 
@@ -11,8 +10,8 @@ namespace mouse
 	int x=0, y=0, dx=0, dy=0;
 }
 
-Vector v(1.3, 3.7, 539);
-	Vector a(1,1,1);
+Vector v(0, 0, 2);
+Vector a(1, 1, 1);
 
 
 GContext::GContext(unsigned int width, unsigned int height, bool fullscreen, sf::ContextSettings cs, unsigned int fps)
@@ -58,9 +57,17 @@ void GContext::initGL()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
-	glLightfv(GL_LIGHT0, GL_POSITION, LIGHT_POSITION);
+	glEnable(GL_COLOR_MATERIAL);
+
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, LIGHT_DIFFUSE);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, LIGHT_AMBIENT);
+	//glLightfv(GL_LIGHT0, GL_SPECULAR, LIGHT_SPECULAR);
+	glLightfv(GL_LIGHT0, GL_POSITION, LIGHT_POSITION);
+	
+	//glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, MAT_SHININESS);
+	//glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, MAT_WHITE);
+	//glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, MAT_YELLOW);
+	//glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, MAT_BLACK);
 	
 	glEnable(GL_LIGHT0);
 
@@ -70,7 +77,7 @@ void GContext::initGL()
 
 void GContext::loopGL()
 {
-	v.normalize();
+	//v.normalize();
 	while(running)
 	{
 		drawGL(true);
@@ -90,7 +97,8 @@ void GContext::drawGL(bool visible)
 	::glMatrixMode(GL_MODELVIEW);
 	::glLoadIdentity();
 	::gluLookAt(cam);
-
+	//glLightfv(GL_LIGHT0, GL_POSITION, LIGHT_POSITION);
+	
 	glPushMatrix();
 
 	if(visible)
@@ -100,20 +108,25 @@ void GContext::drawGL(bool visible)
 		glPushMatrix();
 		glTranslated(2,3,-2);
 		::glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, MAT_OBJECTS);
-		::gluSphere(gluquad, 1, 36, 36);
+		glColor4fv(MAT_OBJECTS);
+		::gluSphere(gluquad, 1, 64, 64);
 		glPopMatrix();
 		glPushMatrix();
 		glTranslated(-2,1,0);
 		::glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, MAT_MAGNETIC);
-		::gluSphere(gluquad, 0.8, 36, 36);
+		glColor4fv(MAT_MAGNETIC);
+		::gluSphere(gluquad, 0.8, 64, 64);
 		glTranslated(6,0,-0.5);
 		::glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, MAT_ELECTRIC);
-		::gluCylinder(gluquad, 1.2, 0.4, 1, 64, 1);
+		glColor4fv(MAT_ELECTRIC);
+		::gluCylinder(gluquad, 0.8, 0.4, 1, 64, 1);
 		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, MAT_GRAVITATIONAL);
-		::gluDisk(gluquad, 0.4, 1.2, 64, 1);
+		glColor4fv(MAT_GRAVITATIONAL);
+		::gluDisk(gluquad, 0.4, 0.8, 64, 1);
+		::glTranslated(0,0,4);
 		glPopMatrix();
 
-		glDisable(GL_LIGHTING);
+		//glDisable(GL_LIGHTING);
 		
 		::glColor4fv(MAT_GRAVITATIONAL);
 		::glVector3d(gluquad, Vector(2.0, 0.0, 0.0));
@@ -125,12 +138,35 @@ void GContext::drawGL(bool visible)
 		v.rotate(a, 0.01);
 
 		glColor4fv(::MAT_OBJECTS);
-		::glVector3d(gluquad, Vector(1,-1,0), v);
+		::glVector3d(gluquad, Vector(1,-1,0), v, 24);
 		glColor4fv(::MAT_ROTATIONAL);
-		::glVector3d(gluquad, Vector(1,-1,0), a);
+		::glVector3d(gluquad, Vector(1,-1,0), a, 24);
+		glColor4fv(::MAT_NEON_GREEN);
+		::glVector3d(gluquad, v+Vector(1,-1,0), (a-v)*2, 24);
+
+		glPushMatrix();
+		glColor4fv(MAT_OBJECTS);
+		Vector top,bottom,left,right,front,back;
+		top = Vector(0,0,1);
+		bottom = Vector(0,0,-1);
+		left = Vector(0,-1,0);
+		right = Vector(0,1,0);
+		front = Vector(1,0,0);
+		back = Vector(-1,0,0);
+		glTranslatev(v);
+		::glTriangle(top, left, front);
+		::glTriangle(top, front, right);
+		::glTriangle(top, right, back);
+		::glTriangle(top, back, left);
+		::glTriangle(bottom, front, left);
+		::glTriangle(bottom, front, right);
+		::glTriangle(bottom, back, right);
+		::glTriangle(bottom, back, left);
+		glPopMatrix();
+
 
 		glColor4fv(MAT_TRANSLATIONAL);
-		::glVector3d(gluquad, cam.getCENTER());
+		::glVector3d(gluquad, cam.getCENTER(), 24);
 
 		::glPushMatrix();
 		float t = 0.2f;
