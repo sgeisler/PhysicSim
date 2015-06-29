@@ -13,7 +13,7 @@ Goals:
 Models:
 -------
 * force
-* momentum
+* linear momentum
 * torque
 * angular momentum
 
