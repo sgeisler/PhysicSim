@@ -22,7 +22,7 @@ public:
 	void translateFlat(double, double, double);
 	void translateParallel(double, double, double);
 	inline void zoom(double r){eye*=(1.0+(0.05*r));}
-	inline void zoomFOV(double r){ fov+=r; if(fov<10)fov=10; if(fov>120)fov=120;	}
+	inline void zoomFOV(double r){ fov+=r; if(fov<10)fov=10; if(fov>120)fov=120; }
 	//Because who needs readable code, right?
 	void orthogonalize();
 
@@ -48,7 +48,14 @@ void glVector3d(GLUquadric*, Vector&, Vector&, unsigned int slices=4);
 void glVector3d(GLUquadric*, Vector&, unsigned int=4);
 void glVector3d(Vector&, Vector&);
 void glVector3d(Vector&);
-void glTriangle(const Vector&, const Vector&, const Vector&);
+void glTriangle(Vector&, Vector&, Vector&, Vector&);
+inline void glNormalv(const Vector& v){glNormal3d(v.getX(), v.getY(), v.getZ());}
+inline void glTranslatev(const Vector& v){glTranslated(v.getX(), v.getY(), v.getZ());}
+inline void glNormal4v(Vector& a, Vector& b, Vector& c, Vector& eye)
+{
+	Vector n = eye.getParallelComponent((b-a).cross(c-a));
+	glNormalv(n);
+}
 inline void glNormal3v(const Vector& a, const Vector& b, const Vector& c)
 {
 	double px,py,pz,qx,qy,qz;
@@ -64,6 +71,4 @@ inline void glNormal3v(const Vector& a, const Vector& b, const Vector& c)
 		px*qy-py*qx
 	);
 }
-inline void glNormalv(const Vector& v){glNormal3d(v.getX(), v.getY(), v.getZ());}
-inline void glTranslatev(const Vector& v){glTranslated(v.getX(), v.getY(), v.getZ());}
 

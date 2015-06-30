@@ -52,6 +52,8 @@ void GContext::initGL()
 	
 	glShadeModel(GL_SMOOTH);
 	
+	glEnable(GL_NORMALIZE);
+
 	glOrtho(-1,1,-1,1,1,-1);
 	
 	glEnable(GL_BLEND);
@@ -147,21 +149,22 @@ void GContext::drawGL(bool visible)
 		glPushMatrix();
 		glColor4fv(MAT_OBJECTS);
 		Vector top,bottom,left,right,front,back;
-		top = Vector(0,0,1);
-		bottom = Vector(0,0,-1);
-		left = Vector(0,-1,0);
-		right = Vector(0,1,0);
-		front = Vector(1,0,0);
-		back = Vector(-1,0,0);
+		top = Vector(3,0,1);
+		bottom = Vector(3,0,-1);
+		left = Vector(3,-1,0);
+		right = Vector(3,1,0);
+		front = Vector(4,0,0);
+		back = Vector(2,0,0);
+
 		glTranslatev(v);
-		::glTriangle(top, left, front);
-		::glTriangle(top, front, right);
-		::glTriangle(top, right, back);
-		::glTriangle(top, back, left);
-		::glTriangle(bottom, front, left);
-		::glTriangle(bottom, front, right);
-		::glTriangle(bottom, back, right);
-		::glTriangle(bottom, back, left);
+		::glTriangle(top, front, left, cam.getEYE());
+		::glTriangle(top, front, right, cam.getEYE());
+		::glTriangle(top, back, right, cam.getEYE());
+		::glTriangle(top, back, left, cam.getEYE());
+		::glTriangle(bottom, front, left, cam.getEYE());
+		::glTriangle(bottom, right, front, cam.getEYE());
+		::glTriangle(bottom, back, right, cam.getEYE());
+		::glTriangle(bottom, left, back, cam.getEYE());
 		glPopMatrix();
 
 

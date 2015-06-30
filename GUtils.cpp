@@ -216,15 +216,15 @@ void glVector3d(Vector& p)
 	glPopMatrix();
 }
 
-void glTriangle(const Vector& a, const Vector& b, const Vector& c)
+void glTriangle(Vector& a, Vector& b, Vector& c, Vector& eye)
 {
-	//glNormal3v(a,b,c);
+	glNormal4v(a,b,c,eye);
 	glBegin(GL_TRIANGLES);
-		glNormalv(a);
+		//glNormalv(a);
 		glVertexv(a);
-		glNormalv(b);
+		//glNormalv(b);
 		glVertexv(b);
-		glNormalv(c);
+		//glNormalv(c);
 		glVertexv(c);
 	glEnd();
 }
