@@ -51,24 +51,6 @@ void glVector3d(Vector&);
 void glTriangle(Vector&, Vector&, Vector&, Vector&);
 inline void glNormalv(const Vector& v){glNormal3d(v.getX(), v.getY(), v.getZ());}
 inline void glTranslatev(const Vector& v){glTranslated(v.getX(), v.getY(), v.getZ());}
-inline void glNormal4v(Vector& a, Vector& b, Vector& c, Vector& eye)
-{
-	Vector n = eye.getParallelComponent((b-a).cross(c-a));
-	glNormalv(n);
-}
-inline void glNormal3v(const Vector& a, const Vector& b, const Vector& c)
-{
-	double px,py,pz,qx,qy,qz;
-	px = (b.getX()-a.getX());
-	py = (b.getY()-a.getY());
-	pz = (b.getZ()-a.getZ());
-	qx = (c.getX()-a.getX());
-	qy = (c.getY()-a.getY());
-	qz = (c.getZ()-a.getZ());
-	glNormal3d(
-		py*qz-pz*qy,
-		pz*qx-px*qz,
-		px*qy-py*qx
-	);
-}
+inline void glNormal4v(Vector& a, Vector& b, Vector& c, Vector& eye){Vector n = eye.getParallelComponent((b-a).cross(c-a));glNormalv(n);}
+void gluCone(double r, double h, unsigned int slices, bool);
 

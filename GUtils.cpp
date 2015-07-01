@@ -158,18 +158,22 @@ void glVector3d(Vector& o, Vector& p)
 		double b = p.abs()*0.05;
 		glBegin(GL_TRIANGLES);
 			
+			glNormal3d(b*h, b*h, b*b);
 			glVertex3d(0,0,h);
 			glVertex3d(0,b,0);
 			glVertex3d(b,0,0);
 		
+			glNormal3d(b*h, -b*h, b*b);
 			glVertex3d(0,0,h);
 			glVertex3d(0,-b,0);
 			glVertex3d(b,0,0);
 		
+			glNormal3d(-b*h, -b*h, b*b);
 			glVertex3d(0,0,h);
 			glVertex3d(0,-b,0);
 			glVertex3d(-b,0,0);
 		
+			glNormal3d(-b*h, b*h, b*b);
 			glVertex3d(0,0,h);
 			glVertex3d(0,b,0);
 			glVertex3d(-b,0,0);
@@ -196,18 +200,22 @@ void glVector3d(Vector& p)
 		double b = p.abs()*0.05;
 		glBegin(GL_TRIANGLES);
 			
+			glNormal3d(b*h, b*h, b*b);
 			glVertex3d(0,0,h);
 			glVertex3d(0,b,0);
 			glVertex3d(b,0,0);
 		
+			glNormal3d(b*h, -b*h, b*b);
 			glVertex3d(0,0,h);
 			glVertex3d(0,-b,0);
 			glVertex3d(b,0,0);
 		
+			glNormal3d(-b*h, -b*h, b*b);
 			glVertex3d(0,0,h);
 			glVertex3d(0,-b,0);
 			glVertex3d(-b,0,0);
 		
+			glNormal3d(-b*h, b*h, b*b);
 			glVertex3d(0,0,h);
 			glVertex3d(0,b,0);
 			glVertex3d(-b,0,0);
@@ -219,13 +227,51 @@ void glVector3d(Vector& p)
 void glTriangle(Vector& a, Vector& b, Vector& c, Vector& eye)
 {
 	glNormal4v(a,b,c,eye);
-	glBegin(GL_TRIANGLES);
+	//glBegin(GL_TRIANGLES);
 		//glNormalv(a);
 		glVertexv(a);
 		//glNormalv(b);
 		glVertexv(b);
 		//glNormalv(c);
 		glVertexv(c);
-	glEnd();
+	//glEnd();
 }
 
+void gluCone(double r, double h, unsigned int slices, bool closeBottom)
+{
+	double x=0, y=r;
+	Vector a = Vector(0,0,1);
+	Vector n = Vector(0,h,r);
+	double angle = 2*3.14159265358979323846/((double)slices);
+	double xn, yn, cos=std::cos(angle), sin=std::sin(angle);
+	//n.rotate(a, 0.5*angle);
+	glBegin(GL_TRIANGLES);
+	glNormalv(n);
+	for(unsigned int c=0; c<slices; c++)
+	{
+		//glNormalv(n);
+		glVertex3d(0,0,h);
+		glVertex3d(x,y,0);
+		xn = cos*x+sin*y;
+		yn = -sin*x+cos*y;
+		x=xn; y=yn;
+		n.rotate(a,-angle);
+		glNormalv(n);
+		glVertex3d(x,y,0);
+	}
+	if(closeBottom)
+	{
+		glNormal3d(0,0,-1);
+		for(unsigned int c=0; c<slices; c++)
+		{
+			glVertex3d(0,0,0);
+			glVertex3d(x,y,0);
+			xn = cos*x+sin*y;
+			yn = -sin*x+cos*y;
+			x=xn; y=yn;
+			glVertex3d(x,y,0);
+		}
+	}
+	glEnd();
+
+}
