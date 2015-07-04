@@ -1,12 +1,13 @@
 #pragma once
 
 #include <SFML/Window.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
 #include "GUtils.h"
 
 class GContext
 {
 public:
-	sf::Window* window;
+	sf::RenderWindow* window;
 	Camera cam;
 	double aspectRatio;
 	GLUquadric* gluquad;
@@ -18,6 +19,7 @@ public:
 	void initGL();
 	void loopGL();
 	void drawGL(bool);
+	void drawSFML();
 	void resizeGL(unsigned int, unsigned int);
 	void pollEvents();
 

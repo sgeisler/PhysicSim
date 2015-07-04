@@ -1,6 +1,7 @@
 #include "include/GContext.h"
 
 #include <SFML/OpenGL.hpp>
+#include <SFML/Graphics.hpp>
 
 #include "Constants.h"
 
@@ -10,6 +11,7 @@ namespace mouse
 	int x=0, y=0, dx=0, dy=0;
 }
 
+double fps = 60.0;
 Vector v(0, 0, 2);
 Vector a(1, 1, 1);
 
@@ -19,9 +21,10 @@ GContext::GContext(unsigned int width, unsigned int height, bool fullscreen, sf:
 	sf::Uint32 screenMode = sf::Style::Default;
 	if(fullscreen)
 		screenMode = sf::Style::Fullscreen;
-	window = new sf::Window(sf::VideoMode(width, height), "Title", screenMode, cs);
+	window = new sf::RenderWindow(sf::VideoMode(width, height), "Title", screenMode, cs);
 	window->setVerticalSyncEnabled(true);
 	window->setFramerateLimit(fps);
+
 	aspectRatio = ((double)width)/((double)height);
 	running = true;
 	gluquad = gluNewQuadric();
@@ -29,9 +32,10 @@ GContext::GContext(unsigned int width, unsigned int height, bool fullscreen, sf:
 
 GContext::GContext(unsigned int width, unsigned int height, sf::Uint32 sm, sf::ContextSettings cs, unsigned int fps)
 {
-	window = new sf::Window(sf::VideoMode(width, height), "Title", sm, cs);
+	window = new sf::RenderWindow(sf::VideoMode(width, height), "Title", sm, cs);
 	window->setVerticalSyncEnabled(true);
 	window->setFramerateLimit(fps);
+
 	aspectRatio = ((double)width)/((double)height);
 	running = true;
 	gluquad = gluNewQuadric();
@@ -40,13 +44,13 @@ GContext::GContext(unsigned int width, unsigned int height, sf::Uint32 sm, sf::C
 
 GContext::~GContext(void)
 {
-	window->~Window();
+	window->~RenderWindow();
 }
 
 void GContext::initGL()
 {
 	glClearColor(COLOR_CLEAR[0], COLOR_CLEAR[1], COLOR_CLEAR[2], COLOR_CLEAR[3]);
-	
+
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 	
@@ -72,6 +76,7 @@ void GContext::initGL()
 	//glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, MAT_BLACK);
 	
 	glEnable(GL_LIGHT0);
+	glEnable(GL_LIGHT1);
 
 	::glLineWidth(1.5);
 	//::glPointSize(2);
@@ -131,11 +136,11 @@ void GContext::drawGL(bool visible)
 		//glDisable(GL_LIGHTING);
 		
 		::glColor4fv(MAT_GRAVITATIONAL);
-		::glVector3d(gluquad, Vector(2.0, 0.0, 0.0));
+		::glVector3d(Vector(2.0, 0.0, 0.0));
 		::glColor4fv(MAT_MAGNETIC);
-		::glVector3d(gluquad, Vector(0.0, 2.0, 0.0));
+		::glVector3d(Vector(0.0, 2.0, 0.0));
 		::glColor4fv(MAT_ELECTRIC);
-		::glVector3d(gluquad, Vector(0.0, 0.0, 2.0));
+		::glVector3d(Vector(0.0, 0.0, 2.0));
 		
 		v.rotate(a, 0.01);
 
@@ -149,14 +154,15 @@ void GContext::drawGL(bool visible)
 		glPushMatrix();
 		glColor4fv(MAT_OBJECTS);
 		Vector top,bottom,left,right,front,back;
-		top = Vector(3,0,1);
-		bottom = Vector(3,0,-1);
-		left = Vector(3,-1,0);
-		right = Vector(3,1,0);
-		front = Vector(4,0,0);
-		back = Vector(2,0,0);
+		top = Vector(0,0,1);
+		bottom = Vector(0,0,-1);
+		left = Vector(0,-1,0);
+		right = Vector(0,1,0);
+		front = Vector(1,0,0);
+		back = Vector(-1,0,0);
 
 		glTranslatev(v);
+		glBegin(GL_TRIANGLES);
 		::glTriangle(top, front, left, cam.getEYE());
 		::glTriangle(top, front, right, cam.getEYE());
 		::glTriangle(top, back, right, cam.getEYE());
@@ -165,9 +171,14 @@ void GContext::drawGL(bool visible)
 		::glTriangle(bottom, right, front, cam.getEYE());
 		::glTriangle(bottom, back, right, cam.getEYE());
 		::glTriangle(bottom, left, back, cam.getEYE());
+		glEnd();
 		glPopMatrix();
-
-
+		
+		glPushMatrix();
+		glTranslatev(v*-1);
+		gluCone(0.6, 0.8, 12, true);
+		glPopMatrix();
+		
 		glColor4fv(MAT_TRANSLATIONAL);
 		::glVector3d(gluquad, cam.getCENTER(), 24);
 
@@ -207,12 +218,24 @@ void GContext::drawGL(bool visible)
 		::glPopMatrix();
 	
 		::glFlush();
-		
+		window->pushGLStates();
+		drawSFML();
+		window->popGLStates();
 		window->display();
 	}else
 	{
 		glDisable(GL_LIGHTING);
 	}
+}
+
+void GContext::drawSFML()
+{
+	sf::CircleShape circle(120);
+	circle.setPosition(120,120);
+	circle.setFillColor(sf::Color(0,0,0,0));
+	circle.setOutlineColor(sf::Color(199, 221, 12, 128));
+	circle.setOutlineThickness(10);
+	window->draw(circle);
 }
 
 void GContext::resizeGL(unsigned int width, unsigned int height)
@@ -252,42 +275,6 @@ void GContext::pollEvents()
 	{
 		running = false;
 	}
-	/*
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-	{
-		cam.translateFlat(0,1,0);
-	}
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-	{
-		cam.translateFlat(1,0,0);
-	}
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-	{
-		cam.translateFlat(0,-1,0);
-	}
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-	{
-		cam.translateFlat(-1,0,0);
-	}
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
-	{
-		cam.translateFlat(0,0,1);
-	}
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
-	{
-		cam.translateFlat(0,0,-1);
-	}
-	*/
-	/*
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::E))
-	{
-		cam.rotateZBound(0,0,1);
-	}
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
-	{
-		cam.rotateZBound(0,0,-1);
-	}
-	*/
 	if(sf::Mouse::isButtonPressed(sf::Mouse::Right))
 	{
 		cam.rotateZBound(mouse::dx, mouse::dy, 0.0);
