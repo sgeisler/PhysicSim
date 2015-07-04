@@ -44,13 +44,13 @@ public:
 
 inline void gluLookAt(Camera& cam){::gluLookAt( cam.getEX(), cam.getEY(), cam.getEZ(), cam.getCX(), cam.getCY(), cam.getCZ(), cam.getUX(), cam.getUY(), cam.getUZ() );}
 inline void glVertexv(const Vector& v){::glVertex3d(v.getX(), v.getY(), v.getZ());}
-void glVector3d(GLUquadric*, Vector&, Vector&, unsigned int slices=4);
-void glVector3d(GLUquadric*, Vector&, unsigned int=4);
+void glVector3d(GLUquadric*, Vector&, Vector&, unsigned int);
+void glVector3d(GLUquadric*, Vector&, unsigned int);
 void glVector3d(Vector&, Vector&);
 void glVector3d(Vector&);
 void glTriangle(Vector&, Vector&, Vector&, Vector&);
 inline void glNormalv(const Vector& v){glNormal3d(v.getX(), v.getY(), v.getZ());}
 inline void glTranslatev(const Vector& v){glTranslated(v.getX(), v.getY(), v.getZ());}
 inline void glNormal4v(Vector& a, Vector& b, Vector& c, Vector& eye){Vector n = eye.getParallelComponent((b-a).cross(c-a));glNormalv(n);}
-void gluCone(double r, double h, unsigned int slices, bool);
+void gluCone(double, double, unsigned int, bool);
 

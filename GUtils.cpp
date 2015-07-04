@@ -244,14 +244,17 @@ void gluCone(double r, double h, unsigned int slices, bool closeBottom)
 	Vector n = Vector(0,h,r);
 	double angle = 2*3.14159265358979323846/((double)slices);
 	double xn, yn, cos=std::cos(angle), sin=std::sin(angle);
+	angle *= 0.5;
 	//n.rotate(a, 0.5*angle);
 	glBegin(GL_TRIANGLES);
 	glNormalv(n);
 	for(unsigned int c=0; c<slices; c++)
 	{
 		//glNormalv(n);
-		glVertex3d(0,0,h);
 		glVertex3d(x,y,0);
+		n.rotate(a,-angle);
+		glNormalv(n);
+		glVertex3d(0,0,h);
 		xn = cos*x+sin*y;
 		yn = -sin*x+cos*y;
 		x=xn; y=yn;
