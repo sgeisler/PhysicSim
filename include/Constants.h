@@ -4,16 +4,17 @@
 #include "Vector.h"
 
 #define PI 3.14159265358979323846
+//#define RADS_PER_DEG 0.0174532925
 //#define N_E 2.71828182845904523536
 
 //#define GC 6.67384E-11;
 
-//const Vector V_O(0,0,0);
-//const Vector E_X(1,0,0);
-//const Vector E_Y(0,1,0);
-//const Vector E_Z(0,0,1);
+const Vector V_O(0,0,0);
+const Vector E_X(1,0,0);
+const Vector E_Y(0,1,0);
+const Vector E_Z(0,0,1);
 
-const float LIGHT_POSITION[] = {0.0, 0.0, 1.0, 0.0};
+const float LIGHT_POSITION[] = {0.0, 0.0, 1.0, 1.0};
 const float LIGHT_DIFFUSE[] = {0.75, 0.75, 0.75, 1.0};
 const float LIGHT_AMBIENT[] = {0.1, 0.1, 0.1, 1.0};
 const float LIGHT_SPECULAR[] = {1.0, 1.0, 1.0, 1.0};
@@ -38,5 +39,7 @@ const float MAT_GRAVITATIONAL[] = {210.0/255.0, 82.0/255.0, 82.0/255.0, 1.0};
 const float MAT_ELECTRIC[] = {103.0/255.0, 140.0/255.0, 177.0/255.0, 1.0};
 const float MAT_MAGNETIC[] = {127.0/255.0, 179.0/255.0, 71.0/255.0, 1.0};
 const float MAT_ELECTRIC_ALTERNATIVE[] = {121.0/255.0, 171.0/255.0, 255.0/255.0, 1.0};
+
+const unsigned int COLOR_NEON_GREEN[] = {199, 221, 12, 255};
 
 #endif /*CONSTANTS_H_*/
