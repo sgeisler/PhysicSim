@@ -262,17 +262,18 @@ void gluCone(double r, double h, unsigned int slices, bool closeBottom)
 		glNormalv(n);
 		glVertex3d(x,y,0);
 	}
+	glEnd();
+	glBegin(GL_TRIANGLE_FAN);
 	if(closeBottom)
 	{
 		glNormal3d(0,0,-1);
-		for(unsigned int c=0; c<slices; c++)
+		glVertex3d(0,0,0);
+		for(unsigned int c=0; c<=slices; c++)
 		{
-			glVertex3d(0,0,0);
 			glVertex3d(x,y,0);
 			xn = cos*x+sin*y;
 			yn = -sin*x+cos*y;
 			x=xn; y=yn;
-			glVertex3d(x,y,0);
 		}
 	}
 	glEnd();
